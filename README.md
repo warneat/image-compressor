@@ -26,7 +26,7 @@ clone this repository, cd into it:
 
 Install dependencies:
 
-        pip3 -r install requirements.txt
+        pip3 install -r requirements.txt
 
 move the script to your image folder e.g: 
     
@@ -34,7 +34,7 @@ move the script to your image folder e.g:
 
 clean up with
 
-        cd .. && rm -r image-compressor
+        cd .. &&  sudo rm -r image-compressor
 
 ###Run
 
