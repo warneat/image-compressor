@@ -11,9 +11,9 @@ Reduce the file-size of your images on the backup device (NAS?) and shove them b
 - The scipt only deals with .jpg files.
 - By default, file size will be reduced to about 25% of the original size, while maintaining acceptable quality.
 - No files will be deleted!
-- .jpg files which do not fit the pattern (e.g. have weird numbers after extension, as i experienced) are copied without changes.
-- files without '.jpg' are being ignored.
-- It does not run through subdirectories.
+- .jpg files that do not fit the pattern (e.g. have weird numbers after the extension, as i experienced in my case) are copied without changes.
+- Files without '.jpg' are ignored.
+- The image_compressor does not run through subdirectories.
 
 Simply place `image_compressor.py` in the directory, where your pictures are sitting and run it. 
 
@@ -36,7 +36,7 @@ clean up with
 
         cd .. &&  sudo rm -r image-compressor
 
-###Run
+### Run
 
 In your image directory run the script with 
     
@@ -57,8 +57,8 @@ In your image directory run the script with
 - The script runs on 4 processes (Raspberry Pi: All 4 cores 100%) :)
 
 - As the processing might take hours or days for large amounts of data, when acessing via remote/ssh you might want to use screen ([ultra-quick tutorial](https://linuxize.com/post/how-to-use-linux-screen/)) to keep it running without an open terminal session.<br> 
-In a nutshell: Install it, `$screen` to start, [do stuff], `ctr+a` and then `d` to detach. Reattach with `$screen -r`
+In a nutshell: Install it, `$screen` to start, [do stuff], `ctr+a` and `d` to detach. Reattach with `$screen -r`
 
-- To automate (image) backups e.g Phone to NAS/Cloud-Server/Online-Account... i highly recommend the app ([FolderSync](https://play.google.com/store/apps/details?id=dk.tacit.android.foldersync.lite)) 
+- To automate (image) backups e.g Phone to NAS/Cloud-Server/Online-Account... i highly recommend the app [FolderSync](https://play.google.com/store/apps/details?id=dk.tacit.android.foldersync.lite) 
 
 #### Feedback is very much apprechiated
