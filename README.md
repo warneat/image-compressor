@@ -1,19 +1,19 @@
 ## Image-Compressor
 
-(tl,dr:) compress your images taken with an Android-Phone into subfolders sorted by years with reduced filesize.<br />
+(tl,dr:) compress your images in IMG_YYYYMMDD_xxxxxx.jpg format into subfolders sorted by years with reduced filesize.<br />
 
 If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, this is an easy solution.<br />
 
 Reduce the file-size of your images on the backup device (NAS?) and shove them back to your phone.
 
 ### Notes:
-- The Android Naming-Convention IMG_YYYYMMDD_HHmmSS.jpg is assumed.
-- The scipt only deals with .jpg files.
+- The naming-Convention IMG_YYYYMMDD_xxxxxx.jpg is assumed (mostly Android standard Camera-App).
+- The image_compressor only deals with .jpg files.
 - By default, file size will be reduced to about 25% of the original size, while maintaining acceptable quality.
 - No files will be deleted!
-- .jpg files that do not fit the pattern (e.g. have weird numbers after the extension, as i experienced in my case) are copied without changes.
+- .jpg files that do not fit the pattern (e.g. have weird numbers after the extension, as i experienced in my case) are copied without changes is file size.
 - Files without '.jpg' are ignored.
-- The image_compressor does not run through subdirectories.
+- The image_compressor does **not** run through subdirectories.
 
 Simply place `image_compressor.py` in the directory, where your pictures are sitting and run it. 
 
