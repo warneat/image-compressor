@@ -1,6 +1,6 @@
 ## image-compressor
 
-(tl,dr:) compress your images in IMG_YYYYMMDD_xxxxxx.jpg format into subfolders sorted by years with reduced filesize.<br />
+(tl;dr) compress your images in IMG_YYYYMMDD_xxxxxx.jpg format into subfolders sorted by years with reduced filesize.<br />
 
 If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, this is an easy solution:<br />
 
