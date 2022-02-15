@@ -19,7 +19,7 @@ Reduce the file-size of your images on the backup device (NAS?) and shove them b
 Simply place `image_compressor.py` at the place your pictures are sitting and run it. 
 
 ### Installation
-Assuming Python and Pip3 is installed, in terminal:
+Assuming Python (version >= 3.4) is installed, in terminal:
 
 clone this repository, cd into it:
 
