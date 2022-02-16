@@ -8,16 +8,9 @@ from multiprocessing import Process
 
 
 def chunk_list(lst, n):
-    lengh = len(lst)
-    chunk_size = int(lengh/n)
-
-    if lengh % n ==0:
-        for i in range(0,lengh, chunk_size):
-            yield lst[i:i + chunk_size]
-    else:
-        chunk_size = int(lengh/n) +1 #awful but good enough
-        for i in range(0, lengh, chunk_size):
-            yield lst[i:i + chunk_size]
+    """yields n evenly spaced arrays."""
+    for i in range(0, n):
+        yield lst[i::n]
 
 def compressing_loop(compressed_dir, script_dir, chunked_list):
 
@@ -91,18 +84,18 @@ def jpg_targets_lists(script_dir):
     target_jpg_list = []
     copy_list = []
     for filename in all_filenames:
-        if (filename.split('.')[-1] == 'jpg' and                  # Extension
+        if (filename.split('.')[-1] == 'jpg' and    # Extension
             filename[0] != '.' and                  # not hidden
             filename[:4] == 'IMG_'):                # convension _
                 target_jpg_list.append(filename)
-        elif ('.jpg' in filename and
-            filename[0] != '.' and
-            filename[:4] == 'IMG_'):
+        elif ('.jpg' in filename and                # is .jpg
+            filename[0] != '.' and                  # not hidden
+            filename[:4] == 'IMG_'):                # fits pattern
                 copy_list.append(filename)
     return target_jpg_list, copy_list
 
 def jpg_year(jpg):
-    # assuming Android naming convention DCIM_2019 :(
+    # assuming naming convention DCIM_YYY... 
     year = jpg.split('_')[1][:4]
     return year
 
@@ -138,7 +131,7 @@ def main():
         # where am i? Path infos
         scrip_path = inspect.getframeinfo(inspect.currentframe()).filename
         script_dir = os.path.dirname(os.path.abspath(scrip_path))
-        compressed_dir = script_dir+'/IMG_compressed'
+        compressed_dir = os.path.join(script_dir, 'IMG_compressed')
 
         #find targets
         compress_jpg_targets, copy_jpg_targets = jpg_targets_lists(script_dir)
@@ -154,7 +147,6 @@ def main():
         
             #chunk targets for 4 processes
             chunk_1, chunk_2, chunk_3, chunk_4 = chunk_list(compress_jpg_targets, 4)
-
             # .../compressed folder available?
             try:
                 if os.path.exists(compressed_dir) is False:
