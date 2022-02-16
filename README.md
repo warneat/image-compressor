@@ -7,14 +7,14 @@ If you run out of storage on your smartphone and don't want to spend hours delet
 Reduce the file-size of your images on the backup device (NAS?) and shove them back to your phone.
 
 ### Notes:
-- The naming-Convention IMG_YYYYMMDD_xxxxxx.jpg is assumed (most common default on Android standard Camera-Apps).
+- The naming-Convention IMG_YYYYMMDD_xxxxxx.jpg is assumed (default for most Android Camera-Apps).
 - The image_compressor script only deals with .jpg files.
 - By default, file size will be reduced to about 25% of the original size, while maintaining acceptable quality.
 - No files will be deleted!
-- A directory 'IMG_compressed' is created wich will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
-- .jpg files that do not fit the pattern (e.g. have weird numbers after the extension, as i experienced in my case) are copied without changes in file size.
-- Files without '.jpg' are ignored.
-- The image_compressor does **not** run through subdirectories.
+- A directory 'IMG_compressed' is created which will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
+- .jpg files that do not fit the pattern (e.g. have weird numbers after the extension, as i experienced in my case) are copied without changes in file-size.
+- Files without '.jpg' are being ignored.
+- The image-compressor does **not** run through subdirectories.
 
 Simply place `image_compressor.py` at the place your pictures are sitting and run it. 
 
@@ -29,11 +29,11 @@ Install dependencies:
 
         pip3 install -r requirements.txt
 
-move the script to your image folder e.g: 
+copy the script to your image folder e.g: 
     
-        mv image_compressor.py ~/foo/bar/images
+        cp image_compressor.py ~/foo/bar/images
 
-clean up with
+Optionally, clean up with
 
         cd .. &&  sudo rm -r image-compressor
 
@@ -46,14 +46,18 @@ In your image directory run the script with
         ./image_compressor.py
 
 
+### On Windows 
 
+- Download this repository or `git clone https://github.com/warneat/image-compressor` like above.
+- Install dependencies: Command-Line from within the new folder `pip3 install -r requirements.txt`
+- move the image-compressor.py script to desired location and run from there with `python .\image_compressor.py`
 
 
 ### Further reading
 
 - By default, compressing value is set to `quality=50`, Antialiasing is enabled. To modify settings:
-  - change `quality=xx`to your liking (line 55) and/or: 
-  - remove `, Image.ANTIALIAS` in line 54 to disable antialising (i don't see a reason to do so...)
+  - change `quality=xx`to your liking (line 48) and/or: 
+  - remove `, Image.ANTIALIAS` in line 47 to disable antialising (i don't see a reason to do so...)
   
 - The script runs on 4 processes (Raspberry Pi: All 4 cores 100%) :)
 
