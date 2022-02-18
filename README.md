@@ -8,7 +8,7 @@ If you run out of storage on your smartphone and don't want to spend hours delet
 ### Notes:
 - The naming-Convention IMG_YYYYMMDD_xxxxxx.jpg is assumed (default for most Android Camera-Apps).
 - The image_compressor script only deals with .jpg files.
-- By default, file size will be reduced to about 25% of the original size, while maintaining absolutely acceptable quality (see also [Further reading](https://github.com/warneat/image-compressor#quality-adjustments)).
+- By default, file size will be reduced to about 25% of the original size, while maintaining absolutely acceptable quality (see also [Quality adjustments](https://github.com/warneat/image-compressor#quality-adjustments)).
 - No files will be deleted!
 - A directory 'IMG_compressed' is created which will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
 - .jpg files that have weird numbers after the extension (as i experienced in my case) are copied without changes.
