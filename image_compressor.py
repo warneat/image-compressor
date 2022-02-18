@@ -30,9 +30,11 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
             #new dir available?
             if os.path.exists(new_dir) is False:
                 os.mkdir(new_dir)
+
             #image already compressed?
-            elif os.path.exists(new_path):
+            if os.path.exists(new_path):
                 pass
+            
             #happened once, not sure why... try ignoring
         except FileExistsError:
             continue
@@ -66,9 +68,11 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
             # new dir available?
             if os.path.exists(new_dir) is False:
                 os.mkdir(new_dir)
+
             #image already copied?
-            elif os.path.exists(new_path):
+            if os.path.exists(new_path):
                 pass
+
         #happened once, not sure why... try ignoring    
         except FileExistsError:
             continue
@@ -78,24 +82,24 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
         #print(f'Copied without compressing: {copy_target}')
 
 def jpg_targets_lists(script_dir):
-    '''list of valid .jpg file names including extension'''
+    '''returns lists of valid .jpg file names including extension for a)compressing and b)copying'''
     all_filenames = os.listdir(script_dir)
 
     target_jpg_list = []
     copy_list = []
     for filename in all_filenames:
-        if (filename.split('.')[-1] == 'jpg' and    # Extension
+        if (filename.split('.')[-1] == 'jpg' and    # is .jpg
             filename[0] != '.' and                  # not hidden
-            filename[:4] == 'IMG_'):                # convension _
+            filename[:4] == 'IMG_'):                # fits pattern
                 target_jpg_list.append(filename)
-        elif ('.jpg' in filename and                # is .jpg
+        elif ('.jpg' in filename and                # contains '.jpg'
             filename[0] != '.' and                  # not hidden
             filename[:4] == 'IMG_'):                # fits pattern
                 copy_list.append(filename)
     return target_jpg_list, copy_list
 
 def jpg_year(jpg):
-    # assuming naming convention DCIM_YYY... 
+    # assuming naming convention DCIM_YYYY... 
     year = jpg.split('_')[1][:4]
     return year
 
@@ -115,10 +119,11 @@ def progress_bar(compressed_dir, total, barLength = 20):
     while count is True:
         current = count_files_in_dirs(compressed_dir)
 
-        # print actual bar:
         percent = float(current) * 100 / total
         arrow   = '-' * int(percent/100 * barLength - 1) + '>'
         spaces  = ' ' * (barLength - len(arrow))
+        
+        # print actual bar:
         print('Progress: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
         if percent >= 100:
             count = False
@@ -147,7 +152,8 @@ def main():
         
             #chunk targets for 4 processes
             chunk_1, chunk_2, chunk_3, chunk_4 = chunk_list(compress_jpg_targets, 4)
-            # .../compressed folder available?
+
+            # ...foo/bar/IMG_compressed folder available?
             try:
                 if os.path.exists(compressed_dir) is False:
                     os.mkdir(compressed_dir)
@@ -169,7 +175,7 @@ def main():
             for p in process_list:
                 p.start()
 
-            #verbotity while running
+            #verbosity while running
             progress_bar(compressed_dir, (jpg_compress_amout+jpg_copy_amount), barLength=40)
             print()
 
