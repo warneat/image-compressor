@@ -2,23 +2,22 @@
 
 (tl;dr) compress your images in IMG_YYYYMMDD_xxxxxx.jpg format into subfolders sorted by years with reduced filesize.<br />
 
-If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, this is an easy solution:<br />
-
-Reduce the file-size of your images on the backup device (NAS?) and shove them back to your phone.
+Use-case:
+If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, one easy solution is to reduce the file-size of your images on the backup device (Computer/HDD/NAS?), using this script and shove them back to your phone.<br />
 
 ### Notes:
 - The naming-Convention IMG_YYYYMMDD_xxxxxx.jpg is assumed (default for most Android Camera-Apps).
 - The image_compressor script only deals with .jpg files.
-- By default, file size will be reduced to about 25% of the original size, while maintaining acceptable quality.
+- By default, file size will be reduced to about 25% of the original size, while maintaining acceptable quality (see also [Further reading](https://github.com/warneat/image-compressor#further-reading)).
 - No files will be deleted!
 - A directory 'IMG_compressed' is created which will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
-- .jpg files that do not fit the pattern (e.g. have weird numbers after the extension, as i experienced in my case) are copied without changes in file-size.
+- .jpg files that have weird numbers after the extension (as i experienced in my case) are copied without changes in file-size.
 - Files without '.jpg' are being ignored.
 - The image-compressor does **not** run through subdirectories.
 
 Simply place `image_compressor.py` at the place your pictures are sitting and run it. 
 
-### Installation
+### Installation (Unix-like, MacOS)
 Assuming Python (version >= 3.4) is installed, in terminal:
 
 clone this repository, cd into it:
@@ -33,7 +32,7 @@ copy the script to your image folder e.g:
     
         cp image_compressor.py ~/foo/bar/images
 
-Optionally, clean up with
+Optionally, clean up/delete repository with
 
         cd .. &&  sudo rm -r image-compressor
 
