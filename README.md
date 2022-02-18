@@ -2,16 +2,16 @@
 
 (tl;dr) compress your images in IMG_YYYYMMDD_xxxxxx.jpg format into subfolders sorted by years with reduced filesize.<br />
 
-Use-case:
-If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, one easy solution is to reduce the file-size of your images on the backup device (Computer/HDD/NAS?), using this script and shove them back to your phone.<br />
+### Use-case:
+If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, one easy solution is to simply reduce the file-size of your images on the backup device (Computer/HDD/NAS?) by using this script and shove them back to your phone.<br />
 
 ### Notes:
 - The naming-Convention IMG_YYYYMMDD_xxxxxx.jpg is assumed (default for most Android Camera-Apps).
 - The image_compressor script only deals with .jpg files.
-- By default, file size will be reduced to about 25% of the original size, while maintaining acceptable quality (see also [Further reading](https://github.com/warneat/image-compressor#further-reading)).
+- By default, file size will be reduced to about 25% of the original size, while maintaining absolutely acceptable quality (see also [Further reading](https://github.com/warneat/image-compressor#quality-adjustments)).
 - No files will be deleted!
 - A directory 'IMG_compressed' is created which will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
-- .jpg files that have weird numbers after the extension (as i experienced in my case) are copied without changes in file-size.
+- .jpg files that have weird numbers after the extension (as i experienced in my case) are copied without changes.
 - Files without '.jpg' are being ignored.
 - The image-compressor does **not** run through subdirectories.
 
@@ -49,15 +49,20 @@ In your image directory run the script with
 
 - Download this repository or `git clone https://github.com/warneat/image-compressor` like above.
 - Install dependencies: Command-Line from within the new folder `pip3 install -r requirements.txt`
-- move the image-compressor.py script to desired location and run from there with `python .\image_compressor.py`
+- move the image-compressor.py script to desired location and run it from there with `python .\image_compressor.py`
 
 
-### Further reading
 
-- By default, compressing value is set to `quality=50`, Antialiasing is enabled. To modify settings:
-  - change `quality=xx`to your liking (line 48) and/or: 
-  - remove `, Image.ANTIALIAS` in line 47 to disable antialising (i don't see a reason to do so...)
+#### Quality adjustments
+-  2 settings are available:
+  - overall quality-value, by default set to `quality=50` 
+  - reduction of image-resolution (pixles) is off by default
   
+  To modify settings:
+  - change `quality=xx` to your liking (line 50) and/or
+  - uncomment (remove `#`) from line 47 and 48 and adjust values
+  
+### Further reading
 - The script runs on 4 processes (Raspberry Pi: All 4 cores 100%) :)
 
 - As the processing might take hours or days for a large amount of data, when accessing via remote/ssh you might want to use screen ([ultra-quick tutorial](https://linuxize.com/post/how-to-use-linux-screen/)) to keep it running in background without an open terminal session.<br> 
