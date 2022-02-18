@@ -59,7 +59,7 @@ In your image directory run the script with
   
   To modify settings:
   - change `quality=xx` to your liking (line 50) and/or
-  - uncomment (remove `#`) from line 47 and 48 and adjust values
+  - uncomment (remove `#`) from line 46 and 47 and adjust values
   
 ### Further reading
 - The script runs on 4 processes (Raspberry Pi: All 4 cores 100%) :)
