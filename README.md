@@ -15,7 +15,7 @@ If you run out of storage on your smartphone and don't want to spend hours delet
 - Files without '.jpg' are being ignored.
 - The image-compressor does **not** run through subdirectories.
 
-Simply place `image_compressor.py` at the place your pictures are sitting and run it. 
+Simply place `image_compressor.py` at the place your pictures are sitting and run it. <br />
 
 ### Installation (Unix-like, MacOS)
 Assuming Python (version >= 3.4) is installed, in terminal:
@@ -36,7 +36,7 @@ Optionally, clean up/delete repository with
 
         cd .. &&  sudo rm -r image-compressor
 
-### Run
+#### Run
 
 In your image directory run the script with 
     
@@ -52,8 +52,7 @@ In your image directory run the script with
 - move the image-compressor.py script to desired location and run it from there with `python .\image_compressor.py`
 
 
-
-#### Quality adjustments
+### Quality adjustments
 -  2 settings are available:
   - overall quality-value, by default set to `quality=50` 
   - reduction of image-resolution (pixles) is off by default
