@@ -1,6 +1,8 @@
 ## image-compressor
 
 (tl;dr) compress your images in IMG_YYYYMMDD_xxxxxx.jpg format into subfolders sorted by years with reduced filesize.<br />
+For videos, see also: [video-compressor](https://github.com/warneat/video-compressor) 
+<br />
 
 ### Use-case:
 If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, one easy solution is to simply reduce the file-size of your images on the backup device (Computer/HDD/NAS?) by using this script and shove them back to your phone.<br />
