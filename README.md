@@ -60,8 +60,8 @@ In your image directory run the script with
   - reduction of image-resolution (pixles) is off by default
   
   To modify settings:
-  - change `quality=xx` to your liking (line 50) and/or
-  - uncomment (remove `#`) from line 46 and 47 and adjust values
+  - change `quality=xx` to your liking (line 52) and/or
+  - uncomment (remove `#`) from line 48 and 49 and adjust values
   
 ### Further reading
 - The script runs on 4 processes (Raspberry Pi: All 4 cores 100%) :)

@@ -3,7 +3,7 @@ import os
 import inspect
 import time
 import shutil
-from PIL import Image
+from PIL import Image, ImageOps
 from multiprocessing import Process
 
 
@@ -11,6 +11,7 @@ def chunk_list(lst, n):
     """yields n evenly spaced arrays."""
     for i in range(0, n):
         yield lst[i::n]
+
 
 def compressing_loop(compressed_dir, script_dir, chunked_list):
 
@@ -41,6 +42,7 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
 
         #load, process, save
         with Image.open(fp=old_path) as image:
+            image = ImageOps.exif_transpose(image)
 
             # resize
             #newsize = image.width//2, image.height//2
