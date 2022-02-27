@@ -20,28 +20,33 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
 
     for jpg in chunked_list:
 
-        # files and directory infos
-        year = jpg_year(jpg)
-        new_dir = os.path.join(compressed_dir, str('IMG_'+year))
+        # path to work with
         old_path = os.path.join(script_dir, jpg)
-        new_path = str(os.path.join(new_dir, jpg)).replace(
-            '.jpg', '_compressed.jpg')
 
-        try:
-            # new dir available?
-            if os.path.exists(new_dir) is False:
-                os.mkdir(new_dir)
-
-            # image already compressed?
-            if os.path.exists(new_path):
-                pass
-
-            # happened once, not sure why... try ignoring
-        except FileExistsError:
-            continue
-
-        #load, process, save
         with Image.open(fp=old_path) as image:
+
+            # from Metadata
+            year = jpg_year(image)
+
+            # name of new dir and path from specific year
+            new_dir = os.path.join(compressed_dir, str('IMG_'+year))
+            new_path = str(os.path.join(new_dir, jpg)).replace(
+                '.jpg', '_compressed.jpg')
+
+            try:
+                # new dir available?
+                if os.path.exists(new_dir) is False:
+                    os.mkdir(new_dir)
+
+                # image already available -> skip
+                if os.path.exists(new_path):
+                    pass
+
+                # happened once, not sure why... try ignoring
+            except FileExistsError:
+                continue
+
+            # necessary to keep orientation
             image = ImageOps.exif_transpose(image)
 
             # resize
@@ -61,7 +66,7 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
         new_dir = os.path.join(compressed_dir, str('IMG_'+year))
         old_path = os.path.join(script_dir, copy_target)
         new_path = str(os.path.join(new_dir, copy_target)
-                       ).replace('.jpg', '_compressed.jpg')
+                       ).replace('.jpg', '_copy.jpg')
 
         try:
             # new dir available?
@@ -82,26 +87,36 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
 
 
 def jpg_targets_lists(script_dir):
-    '''returns lists of valid .jpg file names including extension for a)compressing and b)copying'''
+    """returns lists of valid .jpg file names including extension for a)compressing and b)copying"""
     all_filenames = os.listdir(script_dir)
 
     target_jpg_list = []
     copy_list = []
     for filename in all_filenames:
-        if (filename.split('.')[-1] == 'jpg' and    # is .jpg
-            filename[0] != '.' and                  # not hidden
-                filename[:4] == 'IMG_'):            # fits pattern
+        if (filename.split('.')[-1] == 'jpg' and
+                filename[0] != '.'):
             target_jpg_list.append(filename)
-        elif ('.jpg' in filename and                # contains '.jpg'
-              filename[0] != '.' and                # not hidden
-              filename[:4] == 'IMG_'):              # fits pattern
+
+        elif ('.jpg' in filename and filename[0] != '.'):
             copy_list.append(filename)
+
     return target_jpg_list, copy_list
 
+# not hidden
+# contains '.jpg'
 
-def jpg_year(jpg):
-    # assuming naming convention DCIM_YYYY...
-    year = jpg.split('_')[1][:4]
+
+def jpg_year(image):
+    """ takes image object, returns year when taken from Metadata """
+    try:
+        # take year from image metadata
+        year = str(image._getexif()[36867][:4])
+        return year
+
+    except AttributeError:
+        # try with file creation year
+        year = str(time.ctime(os.path.getctime(image))[-4:])
+
     return year
 
 
@@ -148,12 +163,19 @@ def main():
         jpg_copy_amount = len(copy_jpg_targets)
 
         # 0 targets ->stop
-        if not jpg_compress_amout:
+        if not jpg_compress_amout and not jpg_copy_amount:
             print('No files to compress in this directory')
         else:
             print(f'\nFound {jpg_compress_amout} valid .jpg files to compress')
             print(
                 f'Found {jpg_copy_amount} .jpg files to copy without compressing\n')
+
+            if not copy_jpg_targets:
+                print()
+            else:
+                print('Copying only: (year taken from file creation date)')
+                for _ in copy_jpg_targets:
+                    print(_)
 
             # chunk targets for 4 processes
             chunk_1, chunk_2, chunk_3, chunk_4 = chunk_list(
