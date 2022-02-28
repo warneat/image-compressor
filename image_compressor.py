@@ -48,8 +48,11 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
                 continue
 
             # necessary to keep orientation
-            image = ImageOps.exif_transpose(image)
-
+            try:
+                image = ImageOps.exif_transpose(image)
+            except AttributeError:
+                continue
+            
             # resize
             #newsize = image.width//2, image.height//2
             #image = image.resize(newsize, Image.ANTIALIAS)

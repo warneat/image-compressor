@@ -1,6 +1,6 @@
 ## image-compressor
 
-(tl;dr) compress your images in IMG_YYYYMMDD_xxxxxx.jpg format into subfolders sorted by years with reduced filesize.<br />
+(tl;dr) compress your images in .jpg format into subfolders sorted by years with reduced filesize.<br />
 For videos, see also: [video-compressor](https://github.com/warneat/video-compressor) 
 <br />
 
@@ -8,9 +8,9 @@ For videos, see also: [video-compressor](https://github.com/warneat/video-compre
 If you run out of storage on your smartphone and don't want to spend hours deleting and sorting out pictures, one easy solution is to simply reduce the file-size of your images on the backup device (Computer/HDD/NAS?) by using this script and shove them back to your phone.<br />
 
 ### Notes:
-- The naming-Convention IMG_YYYYMMDD_xxxxxx.jpg is assumed (default for most Android Camera-Apps).
 - The image_compressor script only deals with .jpg files.
 - By default, file size will be reduced to about 20-25% of the original size, while maintaining absolutely acceptable quality (see also [Quality adjustments](https://github.com/warneat/image-compressor#quality-adjustments)).
+- For every .mp4 the year of its creation is taken from (usually available) metadata. Fallback is 'creation-time' which your OS also shows but is not always acurate
 - No files will be deleted!
 - A directory 'IMG_compressed' is created which will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
 - .jpg files that have weird numbers after the extension (as i experienced in my case) are copied without changes.
@@ -60,8 +60,8 @@ In your image directory run the script with
   - reduction of image-resolution (pixles) is off by default (dividing by 2 further reduces filesize by factor 0.25!)
   
   To modify settings:
-  - change `quality=xx` to your liking (line 52) and/or
-  - uncomment (remove `#`) from line 48 and 49 and adjust values
+  - change `quality=xx` to your liking (line 61) and/or
+  - uncomment (remove `#`) from line 57 and 57 and adjust values
   
 ### Further reading
 - The script runs on 4 processes (Raspberry Pi: All 4 cores 100%) :)
