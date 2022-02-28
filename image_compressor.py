@@ -3,6 +3,7 @@ import os
 import inspect
 import time
 import shutil
+import platform
 from PIL import Image, ImageOps
 from multiprocessing import Process
 
@@ -62,9 +63,9 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
     for copy_target in copy_targets:
 
         # files and directory infos
-        year = jpg_year(copy_target)
-        new_dir = os.path.join(compressed_dir, str('IMG_'+year))
         old_path = os.path.join(script_dir, copy_target)
+        year = jpg_year(old_path)
+        new_dir = os.path.join(compressed_dir, str('IMG_'+year))
         new_path = str(os.path.join(new_dir, copy_target)
                        ).replace('.jpg', '_copy.jpg')
 
@@ -83,7 +84,7 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
 
         # copy file
         shutil.copyfile(src=old_path, dst=new_path)
-        #print(f'Copied without compressing: {copy_target}')
+        print(f'Copied without compressing: {copy_target}')
 
 
 def jpg_targets_lists(script_dir):
@@ -93,29 +94,36 @@ def jpg_targets_lists(script_dir):
     target_jpg_list = []
     copy_list = []
     for filename in all_filenames:
-        if (filename.split('.')[-1] == 'jpg' and
-                filename[0] != '.'):
+        if (filename.split('.')[-1] == 'jpg' and                # extension is '.jpg'
+                filename[0] != '.'):                            # not hidden
             target_jpg_list.append(filename)
 
+        # contains '.jpg', not hidden
         elif ('.jpg' in filename and filename[0] != '.'):
             copy_list.append(filename)
 
     return target_jpg_list, copy_list
 
-# not hidden
-# contains '.jpg'
-
 
 def jpg_year(image):
-    """ takes image object, returns year when taken from Metadata """
+    """takes image object or filepath, returns year as string, see fallback options"""
     try:
         # take year from image metadata
         year = str(image._getexif()[36867][:4])
-        return year
 
     except AttributeError:
         # try with file creation year
-        year = str(time.ctime(os.path.getctime(image))[-4:])
+        if platform.system() == 'Windows':
+            year = str(time.ctime(os.path.getctime(image))[-4:])
+        else:
+            stat = os.stat(image)
+            try:
+                # probaply macOS
+                year = str(time.ctime(stat.st_birthtime)[-4:])
+            except AttributeError:
+                # We're probably on Linux. No easy way to get creation dates here,
+                # so we'll settle for when its content was last modified.
+                year = str(time.ctime(stat.st_mtime))[-4:]
 
     return year
 
@@ -173,9 +181,8 @@ def main():
             if not copy_jpg_targets:
                 print()
             else:
-                print('Copying only: (year taken from file creation date)')
-                for _ in copy_jpg_targets:
-                    print(_)
+                print(
+                    'For the following copying-targets, year is taken from file creation date, wich is not always acurate')
 
             # chunk targets for 4 processes
             chunk_1, chunk_2, chunk_3, chunk_4 = chunk_list(
@@ -226,7 +233,7 @@ def main():
 
         for p in process_list:
             p.close
-        print('bye')
+        print('[ctr+c -> byebye]]')
 
 
 if __name__ == '__main__':
