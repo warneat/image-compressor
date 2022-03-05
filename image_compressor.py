@@ -15,10 +15,6 @@ def chunk_list(lst, n):
 
 
 def compressing_loop(compressed_dir, script_dir, chunked_list):
-
-    # which process is doing what??
-    #print(f"Process ID: {os.getpid()}. I'll do {len(chunked_list)} images...")
-
     for jpg in chunked_list:
 
         # path to work with
@@ -26,8 +22,7 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
 
         with Image.open(fp=old_path) as image:
 
-            # from Metadata
-            year = jpg_year(image)
+            year = jpg_year(image, jpg)
 
             # name of new dir and path from specific year
             new_dir = os.path.join(compressed_dir, str('IMG_'+year))
@@ -43,7 +38,7 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
                 if os.path.exists(new_path):
                     pass
 
-                # happened once, not sure why... try ignoring
+                # happened once, not sure why... ignore
             except FileExistsError:
                 continue
 
@@ -52,7 +47,7 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
                 image = ImageOps.exif_transpose(image)
             except AttributeError:
                 continue
-            
+
             # resize
             #newsize = image.width//2, image.height//2
             #image = image.resize(newsize, Image.ANTIALIAS)
@@ -67,7 +62,8 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
 
         # files and directory infos
         old_path = os.path.join(script_dir, copy_target)
-        year = jpg_year(old_path)
+        year = jpg_year(old_path, copy_target)
+        jpg_year(old_path, copy_target)
         new_dir = os.path.join(compressed_dir, str('IMG_'+year))
         new_path = str(os.path.join(new_dir, copy_target)
                        ).replace('.jpg', '_copy.jpg')
@@ -81,7 +77,7 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
             if os.path.exists(new_path):
                 pass
 
-        # happened once, not sure why... try ignoring
+        # happened once, not sure why... ignore
         except FileExistsError:
             continue
 
@@ -108,28 +104,61 @@ def jpg_targets_lists(script_dir):
     return target_jpg_list, copy_list
 
 
-def jpg_year(image):
-    """takes image object or filepath, returns year as string, see fallback options"""
-    try:
-        # take year from image metadata
-        year = str(image._getexif()[36867][:4])
+def jpg_year(img, filename):
+    """takes eighter PIL Image-Object or filepath as img and a filename, returns year as string, see fallback options"""
 
-    except AttributeError:
-        # try with file creation year
-        if platform.system() == 'Windows':
-            year = str(time.ctime(os.path.getctime(image))[-4:])
-        else:
-            stat = os.stat(image)
-            try:
-                # probaply macOS
-                year = str(time.ctime(stat.st_birthtime)[-4:])
-            except AttributeError:
-                # We're probably on Linux. No easy way to get creation dates here,
-                # so we'll settle for when its content was last modified.
-                year = str(time.ctime(stat.st_mtime))[-4:]
+    if isinstance(img, str):
+        # it's a path!
+        year = year_from_name_pattern(filename) #high risk, but effective
+    else:
+        # It's a PIL-object!
+        year = year_from_PIL_obj(img)
+        if year is None:
+            year = year_from_name_pattern(filename)
+            img = img.filename # (img is now path)
+    if year is None:
+    # ...not found
+        year = year_from_os(img)
 
     return year
 
+def year_from_os(filepath):
+    '''takes filepath to file'''
+    if platform.system() == 'Windows':
+        year = str(time.ctime(os.path.getctime(filepath))[-4:])
+    else:
+        try:
+            stat = os.stat(filepath)
+            year = str(time.ctime(stat.st_birthtime)[-4:])
+        except AttributeError:
+            # We're probably on Linux. No easy way to get creation dates here,
+            # uncomment following line to settle for when its content was last modified.
+            # for backup devices probaply not the best solution...
+            # year = str(time.ctime(stat.st_mtime))[-4:]
+            # -> take YYYY
+            year = 'YYYY'
+    return year
+
+def year_from_name_pattern(filename):
+    '''search in filename for common naming-convention... high risk!)'''
+    if len(filename) > 16:  # exclude e.g. IMG_1234567.img (ongoning)
+            filename = filename.upper()
+            if ('IMG_20' in filename or
+                'IMG_19' in filename or
+                'IMG-20' in filename or
+                'IMG-19' in filename):
+                    year = filename.split('IMG_')[1][:4]
+                    return year
+    else:
+        return None
+
+def year_from_PIL_obj(img):
+    try:
+        year = str(img._getexif()[36867][:4])
+        return year
+    except:
+        return None
+        
 
 def count_files_in_dirs(output_dir):
     # recursive
