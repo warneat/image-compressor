@@ -9,8 +9,8 @@ If you run out of storage on your smartphone and don't want to spend hours delet
 
 ### Notes:
 - The image_compressor script only deals with .jpg files.
-- By default, file size will be reduced to about 20-25% of the original size, while maintaining absolutely acceptable quality (see also [Quality adjustments](https://github.com/warneat/image-compressor#quality-adjustments)).
-- For every .mp4 the year of its creation is taken from (usually available) metadata. Fallback is 'creation-time' which your OS also shows but is not always acurate
+- By default, file size will be reduced to about 10-25% of the original size, while maintaining absolutely acceptable quality (see also: [Quality adjustments](https://github.com/warneat/image-compressor#quality-adjustments)).
+- For every .jpg file the year of its creation is taken eighter from metadata or several fallback options (see also: [Further Reading](https://github.com/warneat/image-compressor#further-reading))
 - No files will be deleted!
 - A directory 'IMG_compressed' is created which will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
 - .jpg files that have weird numbers after the extension (as i experienced in my case) are copied without changes.
@@ -64,6 +64,9 @@ In your image directory run the script with
   - uncomment (remove `#`) from line 57 and 57 and adjust values
   
 ### Further reading
+
+- If the information is not available in the 'exif data', the file name is analyzed for common naming-patterns (e.g.) IMG_20220301_134230.jpg, Screenshot_20220301_134230.jpg or similar. Next fallbacks are the 'OS-known' creation-time, which is often not as acurate, especially in case of Linux, where 'YYYY' is used instead.
+
 - The script runs on 4 processes (Raspberry Pi: All 4 cores 100%) :)
 
 - As the processing might take hours or days for a large amount of data, when accessing via remote/ssh you might want to use screen ([ultra-quick tutorial](https://linuxize.com/post/how-to-use-linux-screen/)) to keep it running in background without an open terminal session.<br> 
