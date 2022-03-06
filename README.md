@@ -10,7 +10,7 @@ If you run out of storage on your smartphone and don't want to spend hours delet
 ### Notes:
 - The image_compressor script only deals with .jpg files.
 - By default, file size will be reduced to about 10-25% of the original size, while maintaining absolutely acceptable quality (see also: [Quality adjustments](https://github.com/warneat/image-compressor#quality-adjustments)).
-- For every .jpg file the year of its creation is taken eighter from metadata or several fallback options (see also: [Further Reading](https://github.com/warneat/image-compressor#further-reading))
+- For every .jpg the year of its creation is taken eighter from metadata or one of different fallback option (see also: [Further Reading](https://github.com/warneat/image-compressor#further-reading))
 - No files will be deleted!
 - A directory 'IMG_compressed' is created which will hold the subdirectories IMG_2019, IMG_2020 ... per year respectively.
 - .jpg files that have weird numbers after the extension (as i experienced in my case) are copied without changes.
