@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import datetime
 import os
 import inspect
 import time
@@ -109,18 +110,19 @@ def jpg_year(img, filename):
 
     if isinstance(img, str):
         # it's a path!
-        year = year_from_name_pattern(filename) #high risk, but effective
+        year = year_from_name_pattern(filename)  # risky, but effective
     else:
         # It's a PIL-object!
         year = year_from_PIL_obj(img)
         if year is None:
             year = year_from_name_pattern(filename)
-            img = img.filename # (img is now path)
+            img = img.filename  # (img is now filepath)
     if year is None:
-    # ...not found
+        # ...not found, fallback
         year = year_from_os(img)
 
     return year
+
 
 def year_from_os(filepath):
     '''takes filepath to file'''
@@ -139,26 +141,33 @@ def year_from_os(filepath):
             year = 'YYYY'
     return year
 
+
 def year_from_name_pattern(filename):
-    '''search in filename for common naming-convention... high risk!)'''
-    if len(filename) > 16:  # exclude e.g. IMG_1234567.img (ongoning)
-            filename = filename.upper()
-            if ('IMG_20' in filename or
-                'IMG_19' in filename or
-                'IMG-20' in filename or
-                'IMG-19' in filename):
-                    year = filename.split('IMG_')[1][:4]
-                    return year
-    else:
-        return None
+    '''search in filename for common naming-convention...)'''
+
+    year = None
+    filename = str(filename).upper()
+    prefix_list = ['IMG_', 'IMG-', 'IMG', 'WHATSAPP_IMAGE_',
+                   'SCREENSHOT_', 'SCREENSHOT-', 'SIGNAL-', 'PXL_']
+
+    for prefix in prefix_list:
+        if prefix in filename:
+            try:
+                date = filename.split(prefix)[1][:8]
+                # trying to convert as double-check
+                year = str(datetime.datetime.strptime(date, '%Y%m%d'))[:4]
+            except Exception:
+                continue
+    return year
+
 
 def year_from_PIL_obj(img):
     try:
         year = str(img._getexif()[36867][:4])
         return year
-    except:
+    except Exception:
         return None
-        
+
 
 def count_files_in_dirs(output_dir):
     # recursive
@@ -172,7 +181,7 @@ def count_files_in_dirs(output_dir):
 
 
 def progress_bar(compressed_dir, total, barLength=20):
-    # prints out a nice progress bar by checking number of files
+    '''prints out a nice progress bar by checking number of files'''
     count = True
     while count is True:
         current = count_files_in_dirs(compressed_dir)
