@@ -60,8 +60,9 @@ In your image directory run the script with
   - reduction of image-resolution (pixles) is off by default (dividing by 2 further reduces filesize by factor 0.25!)
   
   To modify settings:
-  - change `quality=xx` to your liking (line 57) and/or
-  - uncomment (remove `#`) from line 53 and 54 and adjust values
+  in lines 52-64
+  - change `quality=xx` to your liking and/or
+  - uncomment (remove `#`) and adjust values
   
 ### Further reading
 

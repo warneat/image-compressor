@@ -54,8 +54,14 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
             #image = image.resize(newsize, Image.ANTIALIAS)
 
             # save with new name, new size and lower quality
-            image.save(new_path, quality=50, subsampling=0)
-            image.close()
+            try:
+                # with available exif data 
+                image.save(new_path, quality=50, subsampling=0, exif=image.info["exif"])
+                image.close()
+            except KeyError:
+                # without available exif data 
+                image.save(new_path, quality=50, subsampling=0)
+                image.close()
 
 
 def copying_loop(compressed_dir, script_dir, copy_targets):
