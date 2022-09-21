@@ -23,8 +23,10 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
 
         with Image.open(fp=old_path) as image:
 
-            year = jpg_year(image, jpg)
+            date = jpg_date(image, jpg)
+            year = date[:4]
 
+            
             # name of new dir and path from specific year
             new_dir = os.path.join(compressed_dir, str('IMG_'+year))
             new_path = str(os.path.join(new_dir, jpg)).replace(
@@ -37,9 +39,9 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
 
                 # image already available -> skip
                 if os.path.exists(new_path):
-                    pass
+                    continue
 
-                # happened once, not sure why... ignore
+                # happened once, not sure why
             except FileExistsError:
                 continue
 
@@ -47,7 +49,7 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
             try:
                 image = ImageOps.exif_transpose(image)
             except AttributeError:
-                continue
+                pass
 
             # resize
             #newsize = image.width//2, image.height//2
@@ -62,16 +64,26 @@ def compressing_loop(compressed_dir, script_dir, chunked_list):
                 # without available exif data 
                 image.save(new_path, quality=50, subsampling=0)
                 image.close()
+        try:
+            set_modified_date(new_path, date)
+        except Exception:
+            pass
+
+def set_modified_date(filepath, date):
+    # set modification date of the copy to creation date.
+    # # change creation date not yet possible os-wide
+    date_timestamp = datetime.datetime.strptime(date, "%Y:%m:%d").timestamp()
+    os.utime(filepath, (time.time(), date_timestamp))
 
 
 def copying_loop(compressed_dir, script_dir, copy_targets):
     for copy_target in copy_targets:
 
         # files and directory infos
+        jpg_dt = jpg_date(old_path, copy_target)
+        jpg_year = jpg_dt[:4]
         old_path = os.path.join(script_dir, copy_target)
-        year = jpg_year(old_path, copy_target)
-        jpg_year(old_path, copy_target)
-        new_dir = os.path.join(compressed_dir, str('IMG_'+year))
+        new_dir = os.path.join(compressed_dir, str('IMG_'+jpg_year))
         new_path = str(os.path.join(new_dir, copy_target)
                        ).replace('.jpg', '_copy.jpg')
 
@@ -92,6 +104,12 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
         shutil.copyfile(src=old_path, dst=new_path)
         print(f'Copied without compressing: {copy_target}')
 
+        #set modification date
+        try:
+            set_modified_date(new_path, jpg_dt)
+        except Exception:
+            pass
+
 
 def jpg_targets_lists(script_dir):
     """returns lists of valid .jpg file names including extension for a)compressing and b)copying"""
@@ -111,69 +129,80 @@ def jpg_targets_lists(script_dir):
     return target_jpg_list, copy_list
 
 
-def jpg_year(img, filename):
-    """takes eighter PIL Image-Object or filepath as img and a filename, returns year as string, see fallback options"""
+
+def jpg_date(img, filename):
+    """takes eighter PIL Image-Object or filepath for "img" and a filename. returns date as string in yyyy:mm:dd, see fallback options"""
 
     if isinstance(img, str):
-        # it's a path!
-        year = year_from_name_pattern(filename)  # risky, but effective
+        # it's not a PIL-object!
+        date = date_from_name_pattern(filename)  # risky, but effective
     else:
         # It's a PIL-object!
-        year = year_from_PIL_obj(img)
-        if year is None:
-            year = year_from_name_pattern(filename)
-            img = img.filename  # (img is now filepath)
-    if year is None:
+        date = date_from_PIL_exif(img)
+
+    if date is None:
+        date = date_from_name_pattern(filename)
+        img = img.filename  # (img is now filepath)
+    if date is None:
         # ...not found, fallback
-        year = year_from_os(img)
+        date = date_from_os(img)
+    if date is None:
+        date = "YYYY:MM:DD"
+    
+    return date
 
-    return year
-
-
-def year_from_os(filepath):
+def date_from_os(filepath):
     '''takes filepath to file'''
+
+    date = None
     if platform.system() == 'Windows':
-        year = str(time.ctime(os.path.getctime(filepath))[-4:])
+        c_timestamp = time.ctime(os.path.getctime(filepath))
+        c_date_obj = datetime.datetime.fromtimestamp(c_timestamp) #datetime obj
+        date = c_date_obj.strftime("%Y:%m:%d") # formated
     else:
         try:
             stat = os.stat(filepath)
-            year = str(time.ctime(stat.st_birthtime)[-4:])
-        except AttributeError:
-            # We're probably on Linux. No easy way to get creation dates here,
-            # uncomment following line to settle for when its content was last modified.
-            # for backup devices probaply not the best solution...
-            # year = str(time.ctime(stat.st_mtime))[-4:]
+            c_time = time.ctime(stat.st_birthtime)
+            c_date_obj = datetime.datetime.strptime(c_time, "%a %b %d %H:%M:%S %Y") #datetime obj
+            date = c_date_obj.strftime("%Y:%m:%d") # formated
+        except Exception:
+            # We're probably on Linux. No easy way to get creation dates here
+            # or something else went wrong
             # -> take YYYY
-            year = 'YYYY'
-    return year
+            date = '0000:01:01'
+    return date
 
 
-def year_from_name_pattern(filename):
+def date_from_name_pattern(filename):
     '''search in filename for common naming-convention...)'''
 
-    year = None
+    date = None
     filename = str(filename).upper()
     prefix_list = ['IMG_', 'IMG-', 'IMG', 'WHATSAPP_IMAGE_',
-                   'SCREENSHOT_', 'SCREENSHOT-', 'SIGNAL-', 'PXL_']
+                'SCREENSHOT_', 'SCREENSHOT-', 'SIGNAL-', 'PXL_']
 
     for prefix in prefix_list:
         if prefix in filename:
             try:
                 date = filename.split(prefix)[1][:8]
                 # trying to convert as double-check
-                year = str(datetime.datetime.strptime(date, '%Y%m%d'))[:4]
+                date = datetime.datetime.strptime(date, '%Y%m%d')
+                # and bring to exif format
+                date = date.strftime("%Y:%m:%d")
             except Exception:
                 continue
-    return year
+        
+    return date
 
 
-def year_from_PIL_obj(img):
+def date_from_PIL_exif(img):
     try:
-        year = str(img._getexif()[36867][:4])
-        return year
+        date = str(img._getexif()[36867])
+        #exif date output example:
+        # 2018:08:25 16:38:43
+        return date[:10]
     except Exception:
         return None
-
 
 def count_files_in_dirs(output_dir):
     # recursive
