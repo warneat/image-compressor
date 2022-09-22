@@ -155,7 +155,7 @@ def date_from_os(filepath):
     else:
         try:
             stat = os.stat(filepath)
-            c_time = time.ctime(stat.st_birthtime)
+            c_time = int(time.ctime(stat.st_birthtime))
             c_date_obj = datetime.datetime.strptime(c_time, "%a %b %d %H:%M:%S %Y") #datetime obj
             date = c_date_obj.strftime("%Y:%m:%d") # formated
         except Exception:
@@ -177,7 +177,6 @@ def date_from_name_pattern(filename):
     for prefix in prefix_list:
         if prefix in filename:
             try:
-                #TODO: fix this...
                 date = str(int(filename.split(prefix)[1][:8]))
                 # trying to convert as double-check
                 date_obj = datetime.datetime.strptime(date, '%Y%m%d')
