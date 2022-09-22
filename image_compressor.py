@@ -149,8 +149,8 @@ def date_from_os(filepath):
 
     date = None
     if platform.system() == 'Windows':
-        c_timestamp = time.ctime(os.path.getctime(filepath))
-        c_date_obj = datetime.datetime.fromtimestamp(c_timestamp) #datetime obj
+        c_time = time.ctime(os.path.getctime(filepath))
+        c_date_obj = datetime.datetime.strptime(c_time, "%a %b %d %H:%M:%S %Y") #datetime obj
         date = c_date_obj.strftime("%Y:%m:%d") # formated
     else:
         try:
