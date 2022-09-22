@@ -140,7 +140,7 @@ def jpg_date(img, filename):
         # ...not found, fallback
         date = date_from_os(img)
     if date is None:
-        date = "YYYY:MM:DD"
+        date = "0000:01:01"
     
     return date
 
@@ -177,11 +177,12 @@ def date_from_name_pattern(filename):
     for prefix in prefix_list:
         if prefix in filename:
             try:
-                date = filename.split(prefix)[1][:8]
+                #TODO: fix this...
+                date = int(filename.split(prefix)[1][:8])
                 # trying to convert as double-check
-                date = datetime.datetime.strptime(date, '%Y%m%d')
+                date_obj = datetime.datetime.strptime(date, '%Y%m%d')
                 # and bring to exif format
-                date = date.strftime("%Y:%m:%d")
+                date = date_obj.strftime("%Y:%m:%d")
             except Exception:
                 continue
         
