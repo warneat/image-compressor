@@ -162,7 +162,7 @@ def date_from_os(filepath):
             # We're probably on Linux. No easy way to get creation dates here
             # or something else went wrong
             # -> take YYYY
-            date = '0000:01:01'
+            date = None
     return date
 
 
@@ -178,7 +178,7 @@ def date_from_name_pattern(filename):
         if prefix in filename:
             try:
                 #TODO: fix this...
-                date = int(filename.split(prefix)[1][:8])
+                date = str(int(filename.split(prefix)[1][:8]))
                 # trying to convert as double-check
                 date_obj = datetime.datetime.strptime(date, '%Y%m%d')
                 # and bring to exif format
