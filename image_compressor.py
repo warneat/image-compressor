@@ -73,9 +73,9 @@ def copying_loop(compressed_dir, script_dir, copy_targets):
     for copy_target in copy_targets:
 
         # files and directory infos
+        old_path = os.path.join(script_dir, copy_target)
         jpg_dt = jpg_date(old_path, copy_target)
         jpg_year = jpg_dt[:4]
-        old_path = os.path.join(script_dir, copy_target)
         new_dir = os.path.join(compressed_dir, str('IMG_'+jpg_year))
         new_path = str(os.path.join(new_dir, copy_target)
                        ).replace('.jpg', '_copy.jpg')
